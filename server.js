@@ -19,17 +19,20 @@ function start(route, handle){
 
 	function onRequest(request, response){
 
-		var pathname = url.parse(request.url).pathname;
+		var pathname = url.parse(request.url).pathname,
+			postData = '';
 
-		console.log(url.parse(request.url).pathname.split('/'));
+		request.setEncoding('utf8');
 
-		route(handle, pathname);
-
-		response.writeHead(200, {
-			'content-type': 'text/plain'
+		//	triggered each time a chunk is received
+		request.addListener('data', function(chunk){
+			postData += chunk;
 		});
-		response.write('yo ' + Date.now());
-		response.end();
+
+		//	triggered when the request has finished being received
+		request.addListener('end', function(){
+			route(handle, pathname, response, postData);
+		});
 	};
 };
 

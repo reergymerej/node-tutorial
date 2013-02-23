@@ -5,6 +5,7 @@ var http = require(PROTOCOL);
 var url = require('url');
 
 
+
 /**
 * @method start
 * @param {function} route method from the router
@@ -19,20 +20,9 @@ function start(route, handle){
 
 	function onRequest(request, response){
 
-		var pathname = url.parse(request.url).pathname,
-			postData = '';
+		var pathname = url.parse(request.url).pathname;
 
-		request.setEncoding('utf8');
-
-		//	triggered each time a chunk is received
-		request.addListener('data', function(chunk){
-			postData += chunk;
-		});
-
-		//	triggered when the request has finished being received
-		request.addListener('end', function(){
-			route(handle, pathname, response, postData);
-		});
+		route(handle, pathname, response, request);
 	};
 };
 
